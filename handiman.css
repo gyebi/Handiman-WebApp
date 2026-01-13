@@ -15,6 +15,9 @@ body {
 }
 
 .screen {
+  min-height: 100vh;
+  padding: 16px;
+  display: flex;
   width: 100%;
   padding: 24px;
   display: flex;
@@ -24,15 +27,16 @@ body {
 }
 
 .app-card {
+  flex: 1;
+  min-height: 90vh;
   background: white;
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
-
 
 h1 {
   font-size: 1.9rem;
@@ -73,7 +77,6 @@ button:active {
   transform: scale(0.96);
 }
 
-
 .service-btn {
   display: flex;
   align-items: center;
@@ -81,3 +84,8 @@ button:active {
   gap: 10px;
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

@@ -6,15 +6,23 @@ function renderHome() {
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
-        <h1>Handiman</h1>
-        <p>Need help with your car?</p>
-        <button onclick="navigate('location')">
-          Request Help
-        </button>
+
+        <div>
+          <h1>Handiman</h1>
+          <p>Need help with your car?</p>
+        </div>
+
+        <div class="button-group">
+          <button onclick="navigate('location')">
+            Request Help
+          </button>
+        </div>
+
       </div>
     </div>
   `;
 }
+
 
 
 /* =========================
@@ -53,16 +61,21 @@ function renderService() {
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
+
         <h2>Select Service</h2>
 
-        <button class="service-btn" onclick="selectService('towing')">🚗 Towing</button>
-        <button class="service-btn" onclick="selectService('jumpstart')">🔋 Jump Start</button>
-        <button class="service-btn" onclick="selectService('tire')">🛞 Tire Change</button>
-        <button class="service-btn" onclick="selectService('fuel')">⛽ Fuel Delivery</button>
+        <div class="button-group">
+          <button onclick="selectService('towing')">🚗 Towing</button>
+          <button onclick="selectService('jumpstart')">🔋 Jump Start</button>
+          <button onclick="selectService('tire')">🛞 Tire Change</button>
+          <button onclick="selectService('fuel')">⛽ Fuel Delivery</button>
+        </div>
+
       </div>
     </div>
   `;
 }
+
 
 
 
