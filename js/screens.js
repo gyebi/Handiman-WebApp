@@ -41,7 +41,7 @@ function renderLocation() {
       </div>
 
       <div class="button-group">
-        <button class="primary" onclick="getLocation()">
+        <button id = "locateBtn" class="primary" onclick="getLocation()">
         Use my location
         </button>
         
@@ -49,7 +49,7 @@ function renderLocation() {
         Back
         </button>
       </div>
-      
+
       </div>
     </div>
   `;
@@ -102,17 +102,38 @@ function selectService(service) {
    CONFIRM SCREEN
 ========================= */
 function renderConfirm() {
+
+  const { lat, lng } = appState.location;
+  const mapUrl = `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+
+
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
+
+      <div>
         <h2>Confirm Request</h2>
+        <p>Here is your current location</p>
+        </div>
+
+        <div class="map-preview">
+          <iframe src="${mapUrl}"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
 
         <p><strong>Service:</strong> ${appState.serviceType}</p>
-        <p><strong>Location:</strong> Captured</p>
 
+        <div class="button-group">
         <button class="primary" onclick="submitRequest()">Confirm</button>
         <button class="secondary" onclick="navigate('service')">Back</button>
       </div>
+      </div>
+      
     </div>
   `;
 }
