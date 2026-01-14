@@ -31,6 +31,29 @@
   
 }
 
+/* =========================
+   APP HEADER (LOGO + TITLE)
+========================= */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px ;
+
+}
+
+.app-logo {
+  height: 40px;
+  width: auto;
+  border-radius: 12px;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--bondi-blue-dark);
+}
 
 body {
   background: var(--bg-app)
