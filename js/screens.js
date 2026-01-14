@@ -1,10 +1,10 @@
 import { navigate } from "./router.js";
 import { appState } from "./handiman.js";
 
-window.navigate = navigate;
-window.getLocation = getLocation;
-window.selectService = selectService;
-window.submitRequest = submitRequest;
+
+
+
+
 /* =========================
    HOME SCREEN
 ========================= */
@@ -64,17 +64,7 @@ export function renderLocation() {
 }
 
 
-/*
- export function renderLocation() {
-  appState.location = {
-    lat: 0,
-    lng: 0
-  };
 
-  navigate("service");
-}
-
-*/
 
 /* =========================
    SERVICE SCREEN
@@ -149,10 +139,4 @@ export function renderConfirm() {
   `;
 }
 
-
-
-export function submitRequest() {
-  console.log("REQUEST DATA:", appState);
-  alert("Request sent 🚗");
-  navigate("home");
-}
+window.selectService = selectService;

@@ -29,3 +29,5 @@ export function navigate(screen) {
     renderHome();
   }
 }
+
+window.navigate = navigate;

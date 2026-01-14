@@ -4,6 +4,13 @@ import { auth } from "./firebase.js";
 import { signInAnonymously, onAuthStateChanged } 
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+import { collection, addDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "./firebase.js";
+
+
+
   const app = document.getElementById("app");
 
 
@@ -88,6 +95,45 @@ export function getLocation() {
 }
 
 window.getLocation = getLocation;
+
+
+
+export async function submitRequest() {
+  console.log("🔥 submitRequest called");
+
+  // Safety check
+  if (!appState.user || !appState.location || !appState.serviceType) {
+    console.error("❌ Missing data:", appState);
+    return;
+  }
+
+  try {
+    const docRef = await addDoc(
+      collection(db, "service-requests"),
+      {
+        clientId: appState.user.uid,
+        serviceType: appState.serviceType,
+        location: {
+          lat: appState.location.lat,
+          lng: appState.location.lng
+        },
+        status: "pending",
+        createdAt: serverTimestamp()
+      }
+    );
+
+    console.log("✅ Request saved with ID:", docRef.id);
+
+    // Optional UX step
+    navigate("home");
+
+  } catch (error) {
+    console.error("❌ Firestore write failed:", error);
+  }
+}
+
+
+window.submitRequest = submitRequest;
 
 console.log("App starting ...")
 navigate("home");
