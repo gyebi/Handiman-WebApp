@@ -140,3 +140,31 @@ export function renderConfirm() {
 }
 
 window.selectService = selectService;
+
+/* =========================
+   REQUEST SUBMITTED SCREEN
+========================= */
+export function renderSubmitted() {
+  app.innerHTML = `
+    <div class="screen">
+      <div class="app-card">
+
+        <div>
+          <h2>✅ Request Submitted</h2>
+          <p>Your request has been received.</p>
+          <p>Status: <strong>Pending</strong></p>
+        </div>
+
+        <div class="button-group">
+          <button class="primary" onclick="navigate('home')">
+            Done
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+console.log("Rendered Submitted Screen");
+

@@ -2,7 +2,8 @@ import {
   renderHome,
   renderLocation,
   renderService,
-  renderConfirm
+  renderConfirm,
+  renderSubmitted
 } from "./screens.js";
 
 
@@ -25,6 +26,11 @@ export function navigate(screen) {
     case "confirm":
       renderConfirm();
       break;
+
+    case "submitted":
+      renderSubmitted();
+      break;
+
     default:
     renderHome();
   }

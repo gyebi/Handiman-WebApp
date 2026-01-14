@@ -125,7 +125,7 @@ export async function submitRequest() {
     console.log("✅ Request saved with ID:", docRef.id);
 
     // Optional UX step
-    navigate("home");
+    navigate("submitted");
 
   } catch (error) {
     console.error("❌ Firestore write failed:", error);
