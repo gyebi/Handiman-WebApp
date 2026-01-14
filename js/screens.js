@@ -1,8 +1,15 @@
+import { navigate } from "./router.js";
+import { appState } from "./handiman.js";
 
+window.navigate = navigate;
+window.getLocation = getLocation;
+window.selectService = selectService;
+window.submitRequest = submitRequest;
 /* =========================
    HOME SCREEN
 ========================= */
-function renderHome() {
+export function renderHome() {
+  console.log("Rendered Home Screen");
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
@@ -28,7 +35,8 @@ function renderHome() {
 /* =========================
    LOCATION SCREEN
 ========================= */
-function renderLocation() {
+export function renderLocation() {
+  console.log("Rendered Location Screen");
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
@@ -56,8 +64,8 @@ function renderLocation() {
 }
 
 
-
-function getLocation() {
+/*
+ export function renderLocation() {
   appState.location = {
     lat: 0,
     lng: 0
@@ -66,11 +74,13 @@ function getLocation() {
   navigate("service");
 }
 
+*/
 
 /* =========================
    SERVICE SCREEN
 ========================= */
-function renderService() {
+export function renderService() {
+   console.log("Rendered Service Screen");
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
@@ -92,7 +102,7 @@ function renderService() {
 
 
 
-function selectService(service) {
+export function selectService(service) {
   appState.serviceType = service;
   navigate("confirm");
 }
@@ -101,7 +111,8 @@ function selectService(service) {
 /* =========================
    CONFIRM SCREEN
 ========================= */
-function renderConfirm() {
+export function renderConfirm() {
+  console.log("Rendered Confirm Screen");
 
   const { lat, lng } = appState.location;
   const mapUrl = `https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
@@ -133,14 +144,14 @@ function renderConfirm() {
         <button class="secondary" onclick="navigate('service')">Back</button>
       </div>
       </div>
-      
+
     </div>
   `;
 }
 
 
 
-function submitRequest() {
+export function submitRequest() {
   console.log("REQUEST DATA:", appState);
   alert("Request sent 🚗");
   navigate("home");

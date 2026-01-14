@@ -1,16 +1,41 @@
-const app = document.getElementById("app");
+
+import { navigate } from "./router.js";
+import { auth } from "./firebase.js";
+import { signInAnonymously, onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const app = document.getElementById("app");
+
+
+export const appState = {
+  user: null,          // firebase user
+  location: null,      // { lat, lng }
+  serviceType: null,
+  currentRequestId: null
+
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    appState.user = user;
+    console.log("✅ Anonymous user signed in:", user.uid);
+  } else {
+    signInAnonymously(auth)
+      .then((result) => {
+        appState.user = result.user;
+        console.log("✅ Anonymous sign-in successful:", result.user.uid);
+      })
+      .catch((error) => {
+        console.error("❌ Anonymous sign-in failed:", error);
+      });
+  }
+});
 
 console.log("APP ELEMENT:", app);
 
-const appState = {
-  location: null,
-  serviceType: null
-};
 
 
 
-console.log("App starting ...")
-navigate("home");
 
 function getLocation() {
   const status = document.getElementById("location-status");
@@ -64,3 +89,6 @@ function getLocation() {
     }
   );
 }
+
+console.log("App starting ...")
+navigate("home");
