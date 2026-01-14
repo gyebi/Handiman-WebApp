@@ -132,8 +132,8 @@ button.accent {
 
 /* Secondary / back */
 button.secondary {
-  background: #e5e5e5;
-  color: #333;
+  background:#cb5b62 ;
+  color: #FFFFFF;
 }
 
 /* Destructive / warning (future use) */
