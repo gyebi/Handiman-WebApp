@@ -34,10 +34,7 @@ onAuthStateChanged(auth, (user) => {
 console.log("APP ELEMENT:", app);
 
 
-
-
-
-function getLocation() {
+export function getLocation() {
   const status = document.getElementById("location-status");
   const btn = document.getElementById("locateBtn");
 
@@ -89,6 +86,8 @@ function getLocation() {
     }
   );
 }
+
+window.getLocation = getLocation;
 
 console.log("App starting ...")
 navigate("home");

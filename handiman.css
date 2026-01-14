@@ -76,7 +76,7 @@ body {
 
 .app-card {
   flex: 1;
-  min-height: 90vh;
+  min-height: 80vh;
   border-radius: 20px;
   padding: 24px;
   display: flex;
