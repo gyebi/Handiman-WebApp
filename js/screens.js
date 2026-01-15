@@ -145,6 +145,7 @@ window.selectService = selectService;
    REQUEST SUBMITTED SCREEN
 ========================= */
 export function renderSubmitted() {
+  const requestId = appState.currentRequestId;
   app.innerHTML = `
     <div class="screen">
       <div class="app-card">
@@ -153,6 +154,11 @@ export function renderSubmitted() {
           <h2>✅ Request Submitted</h2>
           <p>Your request has been received.</p>
           <p>Status: <strong>Pending</strong></p>
+        </div>
+
+             <div class="request-id">
+          <p><strong>Request ID</strong></p>
+          <p class="mono">${requestId}</p>
         </div>
 
         <div class="button-group">

@@ -123,6 +123,9 @@ export async function submitRequest() {
     );
 
     console.log("✅ Request saved with ID:", docRef.id);
+    appState.currentRequestId = docRef.id;
+
+
 
     // Optional UX step
     navigate("submitted");

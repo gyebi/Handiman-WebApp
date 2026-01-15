@@ -187,3 +187,17 @@ button.loading {
   overflow: hidden;
   border: 1px solid var(--border-soft);
 }
+
+.request-id {
+  background: #f5f7fa;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.request-id .mono {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #1A3A59;
+  word-break: break-all;
+}
