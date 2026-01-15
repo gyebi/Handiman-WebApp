@@ -156,6 +156,11 @@ export function renderSubmitted() {
           <p>Status: <strong>Pending</strong></p>
         </div>
 
+        <div>
+          <h2>📡 Request Status</h2>
+          <p id="live-status">🔄 Waiting for updates…</p>
+        </div>
+
              <div class="request-id">
           <p><strong>Request ID</strong></p>
           <p class="mono">${requestId}</p>
@@ -170,7 +175,37 @@ export function renderSubmitted() {
       </div>
     </div>
   `;
+
+  // Start listening AFTER UI renders
+  listenToRequestStatus();
 }
 
 console.log("Rendered Submitted Screen");
 
+export function renderLiveStatus(request) {
+  const statusEl = document.getElementById("live-status");
+
+  if (!statusEl) return;
+
+  let message = "Pending…";
+
+  switch (request.status) {
+    case "pending":
+      message = "🔄 Waiting for a mechanic";
+      break;
+    case "assigned":
+      message = "🧑‍🔧 Mechanic assigned";
+      break;
+    case "en_route":
+      message = "🚗 Mechanic en route";
+      break;
+    case "completed":
+      message = "✅ Job completed";
+      break;
+  }
+
+  statusEl.textContent = message;
+}
+
+
+window.renderLiveStatus = renderLiveStatus;

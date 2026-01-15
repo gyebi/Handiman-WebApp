@@ -3,13 +3,19 @@ import {
   renderLocation,
   renderService,
   renderConfirm,
-  renderSubmitted
+  renderSubmitted,
 } from "./screens.js";
+
+import { stopRequestListener } from "./handiman.js";
+
 
 
 export function navigate(screen) {
   console.log("Navigating to:", screen);
   
+  // Stop listening to request updates when leaving live-status screen
+  stopRequestListener();
+
   switch (screen) {
     case "home":
       renderHome();

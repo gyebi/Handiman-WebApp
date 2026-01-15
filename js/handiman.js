@@ -9,6 +9,10 @@ import { collection, addDoc, serverTimestamp }
 
 import { db } from "./firebase.js";
 
+import { doc, onSnapshot } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
 
 
   const app = document.getElementById("app");
@@ -101,6 +105,8 @@ window.getLocation = getLocation;
 export async function submitRequest() {
   console.log("🔥 submitRequest called");
 
+ 
+
   // Safety check
   if (!appState.user || !appState.location || !appState.serviceType) {
     console.error("❌ Missing data:", appState);
@@ -140,3 +146,50 @@ window.submitRequest = submitRequest;
 
 console.log("App starting ...")
 navigate("home");
+
+let unsubscribeRequestListener = null;
+
+export function listenToRequestStatus() {
+  const requestId = appState.currentRequestId;
+
+  if (!requestId) {
+    console.error("❌ No request ID to listen to");
+    return;
+  }
+
+  const requestRef = doc(db, "service-requests", requestId);
+
+  console.log("🔄 Listening to request:", requestId);
+
+  // Clean up old listener if any
+  if (unsubscribeRequestListener) {
+    unsubscribeRequestListener();
+  }
+
+  unsubscribeRequestListener = onSnapshot(requestRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      console.warn("⚠️ Request document no longer exists");
+      return;
+    }
+
+    const data = snapshot.data();
+    console.log("📡 Live update:", data);
+
+    appState.currentRequest = data;
+
+    // Re-render status UI
+    renderLiveStatus(data);
+  });
+}
+
+window.listenToRequestStatus = listenToRequestStatus;
+
+export function stopRequestListener() {
+  if (unsubscribeRequestListener) {
+    unsubscribeRequestListener();
+    unsubscribeRequestListener = null;
+    console.log("🛑 Stopped request listener");
+  }
+}
+
+window.stopRequestListener = stopRequestListener;
