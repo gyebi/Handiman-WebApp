@@ -16,7 +16,7 @@ import { doc, onSnapshot }
 
 
   const app = document.getElementById("app");
-
+  let unsubscribeRequestListener = null;
 
 export const appState = {
   user: null,          // firebase user
@@ -147,7 +147,6 @@ window.submitRequest = submitRequest;
 console.log("App starting ...")
 navigate("home");
 
-let unsubscribeRequestListener = null;
 
 export function listenToRequestStatus() {
   const requestId = appState.currentRequestId;
@@ -174,9 +173,7 @@ export function listenToRequestStatus() {
 
     const data = snapshot.data();
     console.log("📡 Live update:", data);
-
     appState.currentRequest = data;
-
     // Re-render status UI
     renderLiveStatus(data);
   });
