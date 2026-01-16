@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Handiman App</title>
   <link rel="stylesheet" href="handiman.css" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" defer>
+  </script>
 </head>
+
 <body>
 
   <div class="app-header">
-  <img src="assets/splash_logo.png" alt="HandiMan Logo" class="app-logo">
- 
-</div>
+    <img src="assets/splash_logo.png" alt="HandiMan Logo" class="app-logo">
+
+  </div>
   <!-- APP ROOT -->
   <div id="app"></div>
 
-    <script type="module" src="js/firebase.js" ></script>
-    <script type="module" src="js/router.js"></script>
-    <script type="module" src="js/screens.js"></script>
-    <script type="module" src="js/handiman.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/router.js"></script>
+  <script type="module" src="js/screens.js"></script>
+  <script type="module" src="js/handiman.js"></script>
 </body>
+
 </html>

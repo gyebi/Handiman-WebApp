@@ -44,6 +44,11 @@ onAuthStateChanged(auth, (user) => {
 
 console.log("APP ELEMENT:", app);
 
+function getCurrentPositionAsync(options) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
 
 export function getLocation() {
   const status = document.getElementById("location-status");
@@ -174,6 +179,7 @@ export function listenToRequestStatus() {
     const data = snapshot.data();
     console.log("📡 Live update:", data);
     appState.currentRequest = data;
+
     // Re-render status UI
     renderLiveStatus(data);
   });
@@ -190,3 +196,28 @@ export function stopRequestListener() {
 }
 
 window.stopRequestListener = stopRequestListener;
+
+// Calculate ETA using Google Maps Distance Matrix API
+
+async function calculateETA(mechanicLoc, clientLoc) {
+  const service = new google.maps.DistanceMatrixService();
+
+  return new Promise((resolve, reject) => {
+    service.getDistanceMatrix(
+      {
+        origins: [mechanicLoc],
+        destinations: [clientLoc],
+        travelMode: "DRIVING",
+      },
+      (response, status) => {
+        if (status !== "OK") reject(status);
+
+        const el = response.rows[0].elements[0];
+        resolve({
+          distance: el.distance.text,
+          duration: el.duration.text
+        });
+      }
+    );
+  });
+}

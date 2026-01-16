@@ -205,6 +205,20 @@ export function renderLiveStatus(request) {
   }
 
   statusEl.textContent = message;
+
+  if (request.mechanic?.location) {
+  calculateETA(
+    request.mechanic.location,
+    request.location
+  ).then(({ distance, duration }) => {
+    document.getElementById("live-status").innerHTML = `
+      🚗 Mechanic on the way<br>
+      ⏱ ETA: <strong>${duration}</strong><br>
+      📍 Distance: ${distance}
+    `;
+  });
+}
+
 }
 
 

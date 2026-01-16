@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mechanic Dashboard</title>
+  <link rel="stylesheet" href="mechanicDashboard.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="top-bar">
+    <h2>🧑‍🔧 Mechanic Dashboard</h2>
+    <span class="status online">● Available</span>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- INCOMING REQUESTS -->
+    <section id="incoming-requests">
+      <h3>🔔 Incoming Requests</h3>
+      <div id="requests-list"></div>
+
+      <div class="request-card">
+        <div class="info">
+          <p class="service">🚗 Towing</p>
+          <p class="distance">📍 3.2 km away</p>
+          <p class="time">⏱ Requested just now</p>
+        </div>
+
+        <div class="actions">
+          <button class="accept">Accept</button>
+          <button class="decline">Decline</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ACTIVE JOB (HIDDEN FOR NOW) -->
+    <section id="active-job" class="hidden">
+      <h3>🔄 Active Job</h3>
+
+      <div class="job-card">
+        <p>Client location shown here</p>
+
+        <div class="job-actions">
+          <button class="primary">Navigate</button>
+          <button class="secondary">Arrived</button>
+          <button class="danger">Complete Job</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="./mechanicDashboard.js"></script>
+</body>
+</html>
