@@ -12,6 +12,8 @@ import { db } from "./firebase.js";
 import { doc, onSnapshot } 
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+  import { renderLiveStatus } from "./screens.js";
+
 
 
 
@@ -48,6 +50,12 @@ function getCurrentPositionAsync(options) {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, options);
   });
+}
+
+export function handleNavigationCleanup(from, to) {
+  if (from === "submitted" && to !== "submitted") {
+    stopRequestListener();
+  }
 }
 
 export function getLocation() {
@@ -110,8 +118,6 @@ window.getLocation = getLocation;
 export async function submitRequest() {
   console.log("🔥 submitRequest called");
 
- 
-
   // Safety check
   if (!appState.user || !appState.location || !appState.serviceType) {
     console.error("❌ Missing data:", appState);
@@ -148,9 +154,6 @@ export async function submitRequest() {
 
 
 window.submitRequest = submitRequest;
-
-console.log("App starting ...")
-navigate("home");
 
 
 export function listenToRequestStatus() {
@@ -199,7 +202,7 @@ window.stopRequestListener = stopRequestListener;
 
 // Calculate ETA using Google Maps Distance Matrix API
 
-async function calculateETA(mechanicLoc, clientLoc) {
+export async function calculateETA(mechanicLoc, clientLoc) {
   const service = new google.maps.DistanceMatrixService();
 
   return new Promise((resolve, reject) => {
@@ -221,3 +224,12 @@ async function calculateETA(mechanicLoc, clientLoc) {
     );
   });
 }
+
+
+console.log("App starting ...");
+//navigate("home");
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("App starting …");
+  navigate("home");
+});

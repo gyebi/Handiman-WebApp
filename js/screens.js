@@ -1,9 +1,15 @@
 import { navigate } from "./router.js";
 import { appState } from "./handiman.js";
+import { listenToRequestStatus, calculateETA } from "./handiman.js";
 
 
 
 
+const app = document.getElementById("app");
+
+let map = null;
+let clientMarker = null;
+let mechanicMarker = null;
 
 /* =========================
    HOME SCREEN
@@ -28,6 +34,7 @@ export function renderHome() {
       </div>
     </div>
   `;
+  console.log("Rendered Home Screen");
 }
 
 
@@ -145,6 +152,7 @@ window.selectService = selectService;
    REQUEST SUBMITTED SCREEN
 ========================= */
 export function renderSubmitted() {
+  console.log("Rendered Submitted Screen");
   const requestId = appState.currentRequestId;
   app.innerHTML = `
     <div class="screen">
@@ -165,11 +173,14 @@ export function renderSubmitted() {
           <p><strong>Request ID</strong></p>
           <p class="mono">${requestId}</p>
         </div>
+        
+        <div id="map" style="height: 300px; width: 100%; border-radius: 12px;">
+        </div>
 
         <div class="button-group">
-          <button class="primary" onclick="navigate('home')">
+           <button class="primary" onclick="navigate('home')">
             Done
-          </button>
+          </button> 
         </div>
 
       </div>
@@ -180,12 +191,33 @@ export function renderSubmitted() {
   listenToRequestStatus();
 }
 
-console.log("Rendered Submitted Screen");
+
 
 export function renderLiveStatus(request) {
   const statusEl = document.getElementById("live-status");
 
-  if (!statusEl) return;
+  if (!statusEl) {
+    return;
+  } else {
+        statusEl.textContent = `Status: ${request.status}`;
+
+  }
+
+  // Init map once (client location)
+  if (!map && request.location) {
+    initMap({
+      lat: request.location.lat,
+      lng: request.location.lng
+    });
+  }
+
+  // Update mechanic marker live
+  if (request.mechanic?.location) {
+    updateMechanicMarker({
+      lat: request.mechanic.location.lat,
+      lng: request.mechanic.location.lng
+    });
+  }
 
   let message = "Pending…";
 
@@ -223,3 +255,43 @@ export function renderLiveStatus(request) {
 
 
 window.renderLiveStatus = renderLiveStatus;
+
+function initMap(clientLocation) {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: clientLocation,
+    zoom: 14
+  });
+
+  // Client marker
+  clientMarker = new google.maps.Marker({
+    position: clientLocation,
+    map,
+    label: "You"
+  });
+}
+
+
+function updateMechanicMarker(mechanicLocation) {
+  if (!map) return;
+
+  if (!mechanicMarker) {
+    mechanicMarker = new google.maps.Marker({
+      position: mechanicLocation,
+      map,
+      icon: {
+        url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      },
+      label: "Mechanic"
+    });
+  } else {
+    mechanicMarker.setPosition(mechanicLocation);
+  }
+}
+
+/*
+onSnapshot(requestRef, (snapshot) => {
+  const data = snapshot.data();
+  renderLiveStatus(data);
+});
+*/
+
