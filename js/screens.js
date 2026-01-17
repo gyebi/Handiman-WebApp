@@ -154,40 +154,46 @@ window.selectService = selectService;
 export function renderSubmitted() {
   console.log("Rendered Submitted Screen");
   const requestId = appState.currentRequestId;
-  app.innerHTML = `
-    <div class="screen">
-      <div class="app-card">
+  app.innerHTML =`
+<div class="screen tracking-screen">
 
-        <div>
-          <h2>✅ Request Submitted</h2>
-          <p>Your request has been received.</p>
-          <p>Status: <strong>Pending</strong></p>
-        </div>
-
-        <div>
-          <h2>📡 Request Status</h2>
-          <p id="live-status">🔄 Waiting for updates…</p>
-        </div>
-
-             <div class="request-id">
-          <p><strong>Request ID</strong></p>
-          <p class="mono">${requestId}</p>
-        </div>
-        
-        <div id="map" style="height: 300px; width: 100%; border-radius: 12px;">
-        </div>
-
-        <div class="button-group">
-           <button class="primary" onclick="navigate('home')">
-            Done
-          </button> 
-        </div>
-
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <button id="back-btn"
+          class="icon-btn"
+          disabled title="You can exit once the job is completed">←</button>
+        <h3>Mechanic Progress</h3>
       </div>
+
+      <!-- Map -->
+      <div id="map" class="map-container"></div>
+
+      <!-- ETA / Progress Card -->
+      <div class="eta-card">
+        <div class="eta-main">
+          <span id="eta-time">Calculating…</span>
+          <span class="eta-label">ETA</span>
+        </div>
+
+        <div class="eta-sub">
+          <span id="eta-distance">—</span>
+          <span id="eta-status">Waiting for mechanic</span>
+        </div>
+      </div>
+
+      <!-- Bottom Actions -->
+      <div class="action-bar">
+        <button class="primary">Start</button>
+        <button class="secondary">Tickets</button>
+        <button class="secondary">Live location</button>
+      </div>
+
+      <!-- Hidden status (logic-driven) -->
+      <p id="live-status" class="hidden"></p>
+
     </div>
   `;
 
-  // Start listening AFTER UI renders
   listenToRequestStatus();
 }
 
@@ -213,11 +219,21 @@ export function renderLiveStatus(request) {
 
   // Update mechanic marker live
   if (request.mechanic?.location) {
-    updateMechanicMarker({
-      lat: request.mechanic.location.lat,
-      lng: request.mechanic.location.lng
-    });
-  }
+  calculateETA(
+    request.mechanic.location,
+    request.location
+  ).then(({ distance, duration }) => {
+
+    const etaTimeEl = document.getElementById("eta-time");
+    const etaDistEl = document.getElementById("eta-distance");
+    const etaStatusEl = document.getElementById("eta-status");
+
+    if (etaTimeEl) etaTimeEl.textContent = duration;
+    if (etaDistEl) etaDistEl.textContent = distance;
+    if (etaStatusEl) etaStatusEl.textContent = "Mechanic en route 🚗";
+  });
+}
+
 
   let message = "Pending…";
 
@@ -236,6 +252,7 @@ export function renderLiveStatus(request) {
       break;
   }
 
+  
   statusEl.textContent = message;
 
   if (request.mechanic?.location) {

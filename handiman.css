@@ -201,3 +201,60 @@ button.loading {
   color: #1A3A59;
   word-break: break-all;
 }
+
+.tracking-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.map-container {
+  flex: 1;
+}
+
+.eta-card {
+  background: white;
+  margin: -40px 16px 12px;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.eta-main {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.eta-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.eta-sub {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+.action-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.action-bar button {
+  flex: 1;
+}
+
+.hidden {
+  display: none;
+}
