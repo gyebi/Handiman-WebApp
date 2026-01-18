@@ -258,3 +258,8 @@ button.loading {
 .hidden {
   display: none;
 }
+
+.locked-msg {
+  color:#cb5b62;
+  font-size: 0.9rem;
+}

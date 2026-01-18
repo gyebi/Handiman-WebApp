@@ -5,8 +5,10 @@ import {
   where,
   onSnapshot,
   doc,
-  updateDoc
+  updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 
 console.log("🧑‍🔧 Mechanic dashboard live");
 
@@ -27,10 +29,11 @@ let gpsWatchId = null;
 // 🔔 Listen to pending requests
 const q = query(
   collection(db, "service-requests"),
-  where("status", "==", "pending")
+  where("status", "in", ["pending", "assigned", "en_route", "arrived"])
 );
 
 onSnapshot(q, (snapshot) => {
+    console.log("📡 Pending jobs:", snapshot.docs.length);
   requestsList.innerHTML = "";
 
   if (snapshot.empty) {
@@ -38,28 +41,55 @@ onSnapshot(q, (snapshot) => {
     return;
   }
 
-  snapshot.forEach((docSnap) => {
-    const request = docSnap.data();
-    const requestId = docSnap.id;
 
-    const card = document.createElement("div");
-    card.className = "request-card";
+snapshot.forEach((docSnap) => {
+  const req = docSnap.data();
+  const requestId = docSnap.id;
 
-    card.innerHTML = `
-      <div class="info">
-        <p class="service">🚗 ${request.serviceType}</p>
-        <p class="distance">📍 Client nearby</p>
-        <p class="time">⏱ Just now</p>
-      </div>
+  const card = document.createElement("div");
+  //card.className = "request-card";
 
-      <div class="actions">
-        <button class="accept" data-id="${requestId}">Accept</button>
-        <button class="decline" data-id="${requestId}">Decline</button>
-      </div>
+  let actionButtons = "";
+
+  if (req.status === "pending") {
+    actionButtons = `
+      <button class="accept" data-id="${requestId}">Accept</button>
+      <button class="decline" data-id="${requestId}">Decline</button>
     `;
+  }
 
-    requestsList.appendChild(card);
-  });
+  if (req.status === "assigned") {
+    actionButtons = `
+      <button class="start" data-id="${requestId}">Start</button>
+    `;
+  }
+
+  if (req.status === "en_route") {
+    actionButtons = `
+      <button class="arrived" data-id="${requestId}">Arrived</button>
+    `;
+  }
+
+  if (req.status === "arrived") {
+    actionButtons = `
+      <button class="complete" data-id="${requestId}">Complete</button>
+    `;
+  }
+
+  card.innerHTML = `
+    <div class="info">
+      <p>🚗 ${req.serviceType}</p>
+      <p>Status: ${req.status}</p>
+    </div>
+
+    <div class="actions">
+      ${actionButtons}
+    </div>
+  `;
+
+  requestsList.appendChild(card);
+});
+
 });
 
 // 🔘 BUTTON HANDLING (EVENT DELEGATION)
@@ -68,39 +98,25 @@ requestsList.addEventListener("click", async (e) => {
 
   if (!requestId) return;
 
-  // ✅ ACCEPT
   if (e.target.classList.contains("accept")) {
-    await acceptRequest(requestId);
+    await acceptRequest(requestId, mechanicProfile);
   }
 
-  // ❌ DECLINE (UI-only for now)
-  if (e.target.classList.contains("decline")) {
-    alert("Request declined");
+  if (e.target.classList.contains("start")) {
+    await startEnRoute(requestId);
+  }
+
+  if (e.target.classList.contains("arrived")) {
+    await markArrived(requestId);
+  }
+
+  if (e.target.classList.contains("complete")) {
+    await completeJob(requestId);
   }
 });
 
-// ✅ ACCEPT REQUEST LOGIC
-async function acceptRequest(requestId) {
-  try {
-    await updateDoc(doc(db, "service-requests", requestId), {
-      status: "on_the_way",
-      mechanicId: mechanicProfile.id,
-      mechanic: {
-        name: mechanicProfile.name,
-        phone: mechanicProfile.phone,
-        vehicle: mechanicProfile.vehicleType,
-        photoURL: mechanicProfile.photoURL
-      }
-    });
 
-    console.log("✅ Request accepted:", requestId);
 
-    startMechanicTracking(requestId);
-
-  } catch (error) {
-    console.error("❌ Failed to accept request:", error);
-  }
-}
 /*
 // 🚚 START MECHANIC GPS TRACKING
 function startMechanicTracking(requestId) {
@@ -145,7 +161,23 @@ function startMechanicTracking(requestId) {
 */
 
 function startMechanicTracking(requestId) {
-  if (!navigator.geolocation) {
+  navigator.geolocation.watchPosition((pos) => {
+    updateDoc(doc(db, "service-requests", requestId), {
+      "mechanic.location": {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      }
+    });
+  }, 
+  (error) => {
+    console.warn("⚠️ GPS issue:", error.message);
+  },
+  {
+    enableHighAccuracy: false,
+    maximumAge: 5000,
+    timeout: 30000
+  });
+  /*if (!navigator.geolocation) {
     console.error("❌ Geolocation not supported");
     return;
   }
@@ -181,23 +213,89 @@ function startMechanicTracking(requestId) {
       timeout: 10000
     }
   );
+  */
 }
 
 
 
+// ✅ ACCEPT REQUEST LOGIC
 
-/*
+async function acceptRequest(requestId, mechanicProfile) {
+  await updateDoc(doc(db, "service-requests", requestId), {
+    status: "assigned",
+    mechanic: {
+      id: mechanicProfile.id,
+      name: mechanicProfile.name,
+      phone: mechanicProfile.phone,
+      vehicle: mechanicProfile.vehicleType,
+      location: null
+    },
+    assignedAt: serverTimestamp()
+  });
 
-navigator.geolocation.watchPosition(
-  (pos) => {
-    updateDoc(doc(db, "service-requests", requestId), {
-      "mechanic.location": {
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      }
-    });
-  },
-  (err) => console.error("Mechanic GPS error", err),
-  { enableHighAccuracy: true }
+  console.log("✅ Request accepted:", requestId);
+}
+
+
+async function startEnRoute(requestId) {
+  await updateDoc(doc(db, "service-requests", requestId), {
+    status: "en_route"
+  });
+
+  startMechanicTracking(requestId);
+}
+
+
+async function markArrived(requestId) {
+  await updateDoc(doc(db, "service-requests", requestId), {
+    status: "arrived"
+  });
+}
+
+
+async function completeJob(requestId) {
+  await updateDoc(doc(db, "service-requests", requestId), {
+    status: "completed",
+    completedAt: serverTimestamp()
+  });
+}
+
+
+const activeJobQuery = query(
+  collection(db, "service-requests"),
+  where("mechanic.id", "==", mechanicProfile.id),
+  where("status", "in", ["assigned", "en_route", "arrived"])
 );
-*/
+
+onSnapshot(activeJobQuery, (snapshot) => {
+  if (snapshot.empty) return;
+
+  snapshot.forEach((docSnap) => {
+    const job = docSnap.data();
+    const jobId = docSnap.id;
+
+    renderActiveJob(jobId, job);
+  });
+});
+
+
+function renderActiveJob(jobId, job) {
+  requestsList.innerHTML = `
+    <div class="request-card active">
+
+      <p>🚗 ${job.serviceType}</p>
+      <p>Status: <strong>${job.status}</strong></p>
+
+      <div class="actions">
+        ${job.status === "assigned" ? `<button onclick="startEnRoute('${jobId}')">Start</button>` : ""}
+        ${job.status === "en_route" ? `<button onclick="markArrived('${jobId}')">Arrived</button>` : ""}
+        ${job.status === "arrived" ? `<button onclick="completeJob('${jobId}')">Complete</button>` : ""}
+      </div>
+
+    </div>
+  `;
+}
+
+window.startEnRoute = startEnRoute;
+window.markArrived = markArrived;
+window.completeJob = completeJob;
