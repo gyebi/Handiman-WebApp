@@ -9,6 +9,19 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import { createMechJob } from "./mechanicJobs.js";
+
+import {
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+
+let mechanicHasActiveJob = false;
+const activeJobContainer = document.getElementById("active-job-container");
+
+
+
 
 console.log("🧑‍🔧 Mechanic dashboard live");
 
@@ -52,10 +65,18 @@ snapshot.forEach((docSnap) => {
   let actionButtons = "";
 
   if (req.status === "pending") {
+    if (!mechanicHasActiveJob) {
     actionButtons = `
       <button class="accept" data-id="${requestId}">Accept</button>
       <button class="decline" data-id="${requestId}">Decline</button>
     `;
+  } else {
+    actionButtons = `
+      <p class="locked-msg">
+        🔒 Finish your active job before accepting another
+      </p>
+    `;
+  }
   }
 
   if (req.status === "assigned") {
@@ -234,13 +255,24 @@ async function acceptRequest(requestId, mechanicProfile) {
   });
 
   console.log("✅ Request accepted:", requestId);
+
+  // 🔗 WRITE-ONLY BRIDGE (safe)
+  try {
+    await createMechJob(requestId, mechanicProfile.id);
+  } catch (err) {
+    console.warn("⚠️ Mech-job creation failed (non-blocking):", err);
+  }
 }
+
 
 
 async function startEnRoute(requestId) {
   await updateDoc(doc(db, "service-requests", requestId), {
     status: "en_route"
   });
+
+    await updateMechJobStatus(requestId, "en_route", 66);
+
 
   startMechanicTracking(requestId);
 }
@@ -250,6 +282,10 @@ async function markArrived(requestId) {
   await updateDoc(doc(db, "service-requests", requestId), {
     status: "arrived"
   });
+
+  // 🔄 sync mech-job
+  await updateMechJobStatus(requestId, "arrived", 90);
+
 }
 
 
@@ -258,7 +294,11 @@ async function completeJob(requestId) {
     status: "completed",
     completedAt: serverTimestamp()
   });
+
+  activeJobContainer.innerHTML = "";
 }
+
+
 
 
 const activeJobQuery = query(
@@ -280,21 +320,64 @@ onSnapshot(activeJobQuery, (snapshot) => {
 
 
 function renderActiveJob(jobId, job) {
-  requestsList.innerHTML = `
+  activeJobContainer.innerHTML = `
     <div class="request-card active">
 
-      <p>🚗 ${job.serviceType}</p>
-      <p>Status: <strong>${job.status}</strong></p>
+      <h3>🚗 Active Job</h3>
+
+      <p><strong>Service:</strong> ${job.serviceType || "Service Request"}</p>
+      <p><strong>Status:</strong> ${job.status}</p>
 
       <div class="actions">
-        ${job.status === "assigned" ? `<button onclick="startEnRoute('${jobId}')">Start</button>` : ""}
-        ${job.status === "en_route" ? `<button onclick="markArrived('${jobId}')">Arrived</button>` : ""}
-        ${job.status === "arrived" ? `<button onclick="completeJob('${jobId}')">Complete</button>` : ""}
+        ${job.status === "assigned"
+          ? `<button class="start" data-id="${jobId}">Start</button>`
+          : ""}
+
+        ${job.status === "en_route"
+          ? `<button class="arrived" data-id="${jobId}">Arrived</button>`
+          : ""}
+
+        ${job.status === "arrived"
+          ? `<button class="complete" data-id="${jobId}">Complete</button>`
+          : ""}
       </div>
 
     </div>
   `;
 }
+
+
+const activeMechJobQuery = query(
+  collection(db, "mech-jobs"),
+  where("mechanicId", "==", mechanicProfile.id),
+  where("status", "in", ["assigned", "en_route", "arrived"])
+);
+
+onSnapshot(activeMechJobQuery, (snapshot) => {
+  mechanicHasActiveJob = !snapshot.empty;
+
+  console.log(
+    mechanicHasActiveJob
+      ? "🔒 Mechanic has an active job"
+      : "🔓 Mechanic is free"
+  );
+});
+
+
+async function updateMechJobStatus(requestId, status, progress) {
+  try {
+    await updateDoc(doc(db, "mech-jobs", requestId), {
+      status,
+      progress,
+      updatedAt: serverTimestamp()
+    });
+
+    console.log("🔄 Mech-job status updated:", status);
+  } catch (err) {
+    console.warn("⚠️ Mech-job status sync failed (non-blocking):", err);
+  }
+}
+
 
 window.startEnRoute = startEnRoute;
 window.markArrived = markArrived;
