@@ -1,0 +1,9 @@
+{
+  "name": "handiman-webapp",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "dev:mechanic": "node dev-server.mjs --open mechanic/mechanicDashboard.html"
+  }
+}
