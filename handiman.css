@@ -459,6 +459,23 @@ button.loading {
   z-index: 2;
 }
 
+.status-card.status-pending {
+  border-color: rgba(82, 134, 170, 0.22);
+}
+
+.status-card.status-assigned,
+.status-card.status-en-route {
+  border-color: rgba(0, 212, 166, 0.26);
+}
+
+.status-card.status-arrived {
+  border-color: rgba(241, 208, 67, 0.4);
+}
+
+.status-card.status-completed {
+  border-color: rgba(0, 212, 166, 0.34);
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -469,6 +486,28 @@ button.loading {
   color: #0b5c49;
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.status-pill.pending {
+  background: rgba(82, 134, 170, 0.12);
+  color: var(--bondi-blue-dark);
+}
+
+.status-pill.assigned,
+.status-pill.en-route,
+.status-pill.completed {
+  background: rgba(0, 212, 166, 0.12);
+  color: #0b5c49;
+}
+
+.status-pill.arrived {
+  background: rgba(241, 208, 67, 0.2);
+  color: #7a6400;
+}
+
+.status-summary {
+  margin-top: 14px;
+  color: var(--text-secondary);
 }
 
 .eta-row {
@@ -519,6 +558,138 @@ button.loading {
   gap: 12px;
 }
 
+.progress-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.progress-step {
+  position: relative;
+  padding: 14px 10px;
+  border-radius: 18px;
+  background: rgba(82, 134, 170, 0.08);
+  border: 1px solid rgba(82, 134, 170, 0.1);
+  text-align: center;
+}
+
+.progress-step.is-active {
+  background: rgba(0, 212, 166, 0.14);
+  border-color: rgba(0, 212, 166, 0.22);
+}
+
+.progress-step.is-complete {
+  background: rgba(26, 58, 89, 0.92);
+  border-color: rgba(26, 58, 89, 0.92);
+}
+
+.progress-step.is-complete .progress-label,
+.progress-step.is-complete .progress-meta {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  background: rgba(82, 134, 170, 0.35);
+}
+
+.progress-step.is-active .progress-dot {
+  background: var(--brand-accent);
+  box-shadow: 0 0 0 7px rgba(0, 212, 166, 0.12);
+}
+
+.progress-step.is-complete .progress-dot {
+  background: var(--trio-sunrise);
+}
+
+.progress-label {
+  display: block;
+  color: var(--bondi-blue-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.progress-meta {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+}
+
+.mechanic-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 247, 252, 0.98));
+  border: 1px solid rgba(82, 134, 170, 0.12);
+  border-radius: 24px;
+}
+
+.mechanic-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mechanic-avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(26, 58, 89, 0.94);
+  color: white;
+  font-size: 1.4rem;
+}
+
+.mechanic-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mechanic-name {
+  color: var(--text-primary);
+  font-weight: 800;
+}
+
+.mechanic-role {
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+}
+
+.mechanic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mechanic-field {
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--bg-panel);
+  border: 1px solid rgba(82, 134, 170, 0.08);
+}
+
+.mechanic-field-label {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mechanic-field-value {
+  display: block;
+  margin-top: 6px;
+  color: var(--bondi-blue-dark);
+  font-weight: 800;
+}
+
 .detail-row {
   display: flex;
   justify-content: space-between;
@@ -558,7 +729,9 @@ button.loading {
   }
 
   .service-grid,
-  .eta-row {
+  .eta-row,
+  .progress-strip,
+  .mechanic-grid {
     grid-template-columns: 1fr;
   }
 

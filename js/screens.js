@@ -19,6 +19,89 @@ function formatServiceLabel(service) {
   return labels[service] || "Roadside Help";
 }
 
+function getTrackingStages(currentStatus) {
+  const stages = [
+    { key: "pending", label: "Requested", meta: "Sent" },
+    { key: "assigned", label: "Assigned", meta: "Matched" },
+    { key: "en_route", label: "En Route", meta: "Traveling" },
+    { key: "completed", label: "Completed", meta: "Closed" }
+  ];
+
+  const stageOrder = {
+    pending: 0,
+    assigned: 1,
+    en_route: 2,
+    arrived: 2,
+    completed: 3
+  };
+
+  const activeIndex = stageOrder[currentStatus] ?? 0;
+
+  return stages
+    .map((stage, index) => {
+      let state = "";
+
+      if (index < activeIndex) {
+        state = "is-complete";
+      } else if (index === activeIndex) {
+        state = "is-active";
+      }
+
+      return `
+        <div class="progress-step ${state}">
+          <div class="progress-dot"></div>
+          <span class="progress-label">${stage.label}</span>
+          <span class="progress-meta">${stage.meta}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function buildMechanicCard(request) {
+  if (!request.mechanic) {
+    return `
+      <div class="mechanic-card">
+        <div class="mechanic-head">
+          <div class="mechanic-avatar">🧑‍🔧</div>
+          <div class="mechanic-meta">
+            <span class="mechanic-name">Finding the best match</span>
+            <span class="mechanic-role">We’ll show your mechanic details here once assigned.</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const mechanicName = request.mechanic.name || "Assigned mechanic";
+  const vehicle = request.mechanic.vehicle || "Service vehicle";
+  const phone = request.mechanic.phone || "Shared once available";
+
+  return `
+    <div class="mechanic-card">
+      <div class="mechanic-head">
+        <div class="mechanic-avatar">🧑‍🔧</div>
+        <div class="mechanic-meta">
+          <span class="mechanic-name">${mechanicName}</span>
+          <span class="mechanic-role">Your roadside professional is now linked to this request.</span>
+        </div>
+      </div>
+
+      <div class="mechanic-grid">
+        <div class="mechanic-field">
+          <span class="mechanic-field-label">Vehicle</span>
+          <span class="mechanic-field-value">${vehicle}</span>
+        </div>
+
+        <div class="mechanic-field">
+          <span class="mechanic-field-label">Phone</span>
+          <span class="mechanic-field-value">${phone}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 /* =========================
    HOME SCREEN
 ========================= */
@@ -237,6 +320,10 @@ export function renderConfirm() {
           <button class="primary" onclick="submitRequest()">Confirm Request</button>
           <button class="secondary" onclick="navigate('service')">Choose Another Service</button>
         </div>
+
+        <p id="confirm-status" class="muted-note">
+          Your request will be sent as soon as you confirm.
+        </p>
       </div>
     </div>
   `;
@@ -270,6 +357,9 @@ export function renderSubmitted() {
 
       <div class="status-card">
         <span id="status-pill" class="status-pill">Waiting for mechanic</span>
+        <p id="status-summary" class="status-summary">
+          We are looking for the best mechanic near your current location.
+        </p>
 
         <div class="eta-row">
           <div class="mini-stat">
@@ -300,11 +390,19 @@ export function renderSubmitted() {
           <span class="detail-value">${formatServiceLabel(appState.serviceType)}</span>
         </div>
 
+        <div id="progress-strip" class="progress-strip">
+          ${getTrackingStages("pending")}
+        </div>
+
         <div class="detail-row">
           <span class="detail-key">Customer location</span>
           <span class="detail-value">
             ${appState.location ? `${appState.location.lat.toFixed(4)}, ${appState.location.lng.toFixed(4)}` : "--"}
           </span>
+        </div>
+
+        <div id="mechanic-card-slot">
+          ${buildMechanicCard({ mechanic: null })}
         </div>
 
         <p id="live-status" class="muted-note">
@@ -325,11 +423,25 @@ export function renderSubmitted() {
 export function renderLiveStatus(request) {
   const statusEl = document.getElementById("live-status");
   const pillEl = document.getElementById("status-pill");
+  const statusCardEl = document.querySelector(".status-card");
+  const summaryEl = document.getElementById("status-summary");
   const etaTimeEl = document.getElementById("eta-time");
   const etaDistEl = document.getElementById("eta-distance");
   const etaStatusEl = document.getElementById("eta-status");
+  const progressStripEl = document.getElementById("progress-strip");
+  const mechanicCardSlotEl = document.getElementById("mechanic-card-slot");
 
-  if (!statusEl || !pillEl || !etaTimeEl || !etaDistEl || !etaStatusEl) {
+  if (
+    !statusEl ||
+    !pillEl ||
+    !statusCardEl ||
+    !summaryEl ||
+    !etaTimeEl ||
+    !etaDistEl ||
+    !etaStatusEl ||
+    !progressStripEl ||
+    !mechanicCardSlotEl
+  ) {
     return;
   }
 
@@ -343,38 +455,61 @@ export function renderLiveStatus(request) {
   let message = "We are looking for the best mechanic near your current location.";
   let pill = "Waiting for mechanic";
   let compactStatus = "Pending";
+  let pillClass = "pending";
+  let statusCardClass = "status-pending";
+  let summary = "We have your request and are scanning nearby availability.";
 
   switch (request.status) {
     case "pending":
       message = "We have your request and we’re matching it with an available mechanic.";
       pill = "Request received";
       compactStatus = "Pending";
+      pillClass = "pending";
+      statusCardClass = "status-pending";
+      summary = "Your request is live and waiting for the best nearby mechanic.";
       break;
     case "assigned":
       message = "A mechanic has been assigned and is preparing to head to you.";
       pill = "Mechanic assigned";
       compactStatus = "Assigned";
+      pillClass = "assigned";
+      statusCardClass = "status-assigned";
+      summary = "A mechanic has accepted the job and is getting ready to move.";
       break;
     case "en_route":
       message = "Your mechanic is on the move. Follow the ETA and live map below.";
       pill = "Mechanic en route";
       compactStatus = "En route";
+      pillClass = "en-route";
+      statusCardClass = "status-en-route";
+      summary = "Travel is in progress. ETA and distance are updating from the live route.";
       break;
     case "arrived":
       message = "Your mechanic has arrived at your location.";
       pill = "Mechanic arrived";
       compactStatus = "Arrived";
+      pillClass = "arrived";
+      statusCardClass = "status-arrived";
+      summary = "Your mechanic is on site and ready to help.";
       break;
     case "completed":
       message = "This roadside request has been marked as completed.";
       pill = "Job completed";
       compactStatus = "Completed";
+      pillClass = "completed";
+      statusCardClass = "status-completed";
+      summary = "The request has been closed successfully.";
       break;
   }
 
   pillEl.textContent = pill;
+  pillEl.className = `status-pill ${pillClass}`;
+  statusCardEl.className = `status-card ${statusCardClass}`;
+  summaryEl.textContent = summary;
   statusEl.textContent = message;
   etaStatusEl.textContent = compactStatus;
+  progressStripEl.innerHTML = getTrackingStages(request.status);
+  mechanicCardSlotEl.innerHTML = buildMechanicCard(request);
 
   if (request.mechanic?.location) {
     updateMechanicMarker(request.mechanic.location);
@@ -436,7 +571,15 @@ function copyRequestId() {
     return;
   }
 
-  navigator.clipboard.writeText(appState.currentRequestId).catch(() => {});
+  navigator.clipboard
+    .writeText(appState.currentRequestId)
+    .then(() => {
+      const statusEl = document.getElementById("live-status");
+      if (statusEl) {
+        statusEl.textContent = "Request ID copied to your clipboard.";
+      }
+    })
+    .catch(() => {});
 }
 
 window.copyRequestId = copyRequestId;
