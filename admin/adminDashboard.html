@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1A3A59" />
+  <title>HandiMan Admin Dashboard</title>
+  <link rel="stylesheet" href="adminDashboard.css" />
+</head>
+<body>
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div class="brand-block">
+        <img src="../assets/splash_logo.png" alt="HandiMan Logo" class="brand-logo" />
+        <div class="brand-copy">
+          <span class="eyebrow">Admin Dashboard</span>
+          <h1>HandiMan Operations</h1>
+          <p>Monitor requests, review assignments, and intervene when the queue needs help.</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <div>
+          <strong>Live operations</strong>
+          <p>Connected to Firestore request stream</p>
+        </div>
+      </div>
+    </header>
+
+    <nav class="platform-nav" aria-label="Admin sections">
+      <button class="nav-tab active" data-view="operations">Operations</button>
+      <button class="nav-tab" data-view="mechanics">Mechanics</button>
+      <button class="nav-tab" data-view="reports">Reports</button>
+    </nav>
+
+    <section id="operations-view" class="admin-view active">
+      <section class="overview-grid">
+        <article class="overview-card">
+          <span class="overview-label">Pending</span>
+          <strong id="metric-pending">0</strong>
+          <p>Requests waiting for a mechanic</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">Assigned</span>
+          <strong id="metric-assigned">0</strong>
+          <p>Matched and awaiting movement</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">En Route</span>
+          <strong id="metric-enroute">0</strong>
+          <p>Mechanics currently traveling</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">Completed</span>
+          <strong id="metric-completed">0</strong>
+          <p>Closed requests in this live view</p>
+        </article>
+      </section>
+
+      <main class="workspace-grid">
+        <section class="workspace-panel request-panel">
+          <div class="panel-head">
+            <div>
+              <span class="section-tag">Requests</span>
+              <h2>Live Request Queue</h2>
+            </div>
+            <span id="request-count" class="count-pill">0 requests</span>
+          </div>
+
+          <div class="filter-bar">
+            <button class="filter-chip active" data-filter="all">All</button>
+            <button class="filter-chip" data-filter="pending">Pending</button>
+            <button class="filter-chip" data-filter="assigned">Assigned</button>
+            <button class="filter-chip" data-filter="en_route">En Route</button>
+            <button class="filter-chip" data-filter="arrived">Arrived</button>
+            <button class="filter-chip" data-filter="completed">Completed</button>
+          </div>
+
+          <div id="request-list" class="request-list"></div>
+        </section>
+
+        <aside class="workspace-panel detail-panel">
+          <div class="panel-head">
+            <div>
+              <span class="section-tag">Details</span>
+              <h2>Selected Request</h2>
+            </div>
+          </div>
+
+          <div id="request-detail" class="empty-state">
+            <div class="empty-icon">🧭</div>
+            <h3>Select a request</h3>
+            <p>Choose a request from the queue to review details and use admin actions.</p>
+          </div>
+        </aside>
+      </main>
+    </section>
+
+    <section id="mechanics-view" class="admin-view">
+      <section class="overview-grid mechanics-overview-grid">
+        <article class="overview-card">
+          <span class="overview-label">Available</span>
+          <strong id="mechanic-available-count">0</strong>
+          <p>Mechanics ready to take the next job</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">Busy</span>
+          <strong id="mechanic-busy-count">0</strong>
+          <p>Mechanics with an active assignment</p>
+        </article>
+      </section>
+
+      <section class="workspace-panel">
+        <div class="panel-head">
+          <div>
+            <span class="section-tag">Mechanics</span>
+            <h2>Roster And Workload</h2>
+          </div>
+        </div>
+
+        <div id="mechanic-list" class="roster-grid"></div>
+      </section>
+    </section>
+
+    <section id="reports-view" class="admin-view">
+      <section class="overview-grid reports-overview-grid">
+        <article class="overview-card">
+          <span class="overview-label">Total Requests</span>
+          <strong id="report-total-requests">0</strong>
+          <p>All requests currently in the dataset</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">Completion Rate</span>
+          <strong id="report-completion-rate">0%</strong>
+          <p>Resolved and completed requests</p>
+        </article>
+
+        <article class="overview-card">
+          <span class="overview-label">Most Requested</span>
+          <strong id="report-top-service">N/A</strong>
+          <p>Most common roadside service type</p>
+        </article>
+      </section>
+
+      <section class="workspace-panel">
+        <div class="panel-head">
+          <div>
+            <span class="section-tag">Reports</span>
+            <h2>Service Mix Snapshot</h2>
+          </div>
+        </div>
+
+        <div id="report-service-grid" class="report-grid"></div>
+      </section>
+    </section>
+  </div>
+
+  <script type="module" src="./adminDashboard.js"></script>
+</body>
+</html>
