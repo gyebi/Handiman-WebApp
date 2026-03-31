@@ -2,60 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mechanic Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1A3A59" />
+  <title>HandiMan Mechanic App</title>
   <link rel="stylesheet" href="mechanicDashboard.css" />
 </head>
 <body>
+  <div id="mechanic-app" class="mechanic-app state-available">
+    <header class="app-header">
+      <img src="../assets/splash_logo.png" alt="HandiMan Logo" class="app-logo" />
+      <div class="header-copy">
+        <span class="eyebrow">Mechanic App</span>
+        <h1>HandiMan</h1>
+        <p id="header-subtitle">Ready to take the next roadside request.</p>
+      </div>
+      <div id="availability-card" class="availability-card">
+        <span id="availability-dot" class="availability-dot"></span>
+        <span id="availability-label">Available</span>
+      </div>
+    </header>
 
-  <!-- HEADER -->
-  <header class="top-bar">
-    <h2>🧑‍🔧 Mechanic Dashboard</h2>
-    <span class="status online">● Available</span>
-  </header>
-
-  <!-- MAIN -->
-  <main class="container">
-
-    <!-- INCOMING REQUESTS -->
-    <section id="incoming-requests">
-      <h3>🔔 Incoming Requests</h3>
-      <div id="requests-list"></div>
-
-      <div class="request-card">
-        <div class="info">
-          <p class="service"></p>
-          <p class="distance"></p>
-          <p class="time"></p>
+    <main class="app-body">
+      <section id="queue-screen" class="screen-card">
+        <div class="section-head">
+          <div>
+            <span class="section-tag">Available Mode</span>
+            <h2>Incoming Requests</h2>
+          </div>
+          <span id="queue-count" class="count-pill">0</span>
         </div>
 
-        <div class="actions">
-          <!-- button class="accept">Accept</button -->
-          <!-- button class="decline">Decline</button -->
-      </div>
-
-    </section>
-
-    <!-- ACTIVE JOB (HIDDEN FOR NOW) -->
-    <section id="active-job" class="hidden">
-      <h3>🔄 Active Job</h3>
-
-      <div class="job-card">
-        <p>Client location shown here</p>
-
-        <div id="active-job-container"></div>
-
-        <div id="requests-list"></div>
-
-        <div class="job-actions">
-          <button class="primary">Navigate</button>
-          <button class="secondary">Arrived</button>
-          <button class="danger">Complete Job</button>
+        <div class="summary-strip">
+          <div class="summary-card">
+            <span class="summary-label">Pending</span>
+            <strong id="pending-count">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Assigned</span>
+            <strong id="assigned-count">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">En Route</span>
+            <strong id="enroute-count">0</strong>
+          </div>
         </div>
-      </div>
-    </section>
 
-  </main>
+        <p class="section-note">
+          Accept one request at a time. Once you take a job, the app switches into focused job mode.
+        </p>
+
+        <div id="requests-list" class="request-list"></div>
+      </section>
+
+      <section id="active-screen" class="screen-card">
+        <div class="section-head">
+          <div>
+            <span class="section-tag">Active Mode</span>
+            <h2>Current Assignment</h2>
+          </div>
+          <span id="active-job-badge" class="count-pill neutral">Idle</span>
+        </div>
+
+        <div id="focus-banner" class="focus-banner hidden">
+          <strong>Focused job mode</strong>
+          <p>Other pending requests stay hidden until this assignment is completed.</p>
+        </div>
+
+        <div id="progress-strip" class="progress-strip hidden">
+          <div class="progress-step" data-step="assigned">
+            <div class="progress-dot"></div>
+            <span class="progress-label">Assigned</span>
+          </div>
+          <div class="progress-step" data-step="en_route">
+            <div class="progress-dot"></div>
+            <span class="progress-label">En Route</span>
+          </div>
+          <div class="progress-step" data-step="arrived">
+            <div class="progress-dot"></div>
+            <span class="progress-label">Arrived</span>
+          </div>
+          <div class="progress-step" data-step="completed">
+            <div class="progress-dot"></div>
+            <span class="progress-label">Done</span>
+          </div>
+        </div>
+
+        <div id="active-job-container" class="empty-state">
+          <div class="empty-icon">🧰</div>
+          <h3>No active assignment</h3>
+          <p>Accept a request to move into the live job workspace.</p>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script type="module" src="./mechanicDashboard.js"></script>
 </body>
