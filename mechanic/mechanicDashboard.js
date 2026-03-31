@@ -12,15 +12,11 @@ import {
 import { createMechJob } from "./mechanicJobs.js";
 
 const mechanicApp = document.getElementById("mechanic-app");
-const headerSubtitle = document.getElementById("header-subtitle");
-const availabilityCard = document.getElementById("availability-card");
-const availabilityLabel = document.getElementById("availability-label");
 const queueCount = document.getElementById("queue-count");
 const pendingCount = document.getElementById("pending-count");
 const assignedCount = document.getElementById("assigned-count");
 const enrouteCount = document.getElementById("enroute-count");
 const requestsList = document.getElementById("requests-list");
-const activeJobBadge = document.getElementById("active-job-badge");
 const focusBanner = document.getElementById("focus-banner");
 const progressStrip = document.getElementById("progress-strip");
 const activeJobContainer = document.getElementById("active-job-container");
@@ -91,15 +87,8 @@ function setAppMode(isBusy) {
 
   mechanicApp.classList.toggle("state-active", isBusy);
   mechanicApp.classList.toggle("state-available", !isBusy);
-  availabilityCard.classList.toggle("busy", isBusy);
-  availabilityLabel.textContent = isBusy ? "On Job" : "Available";
-  activeJobBadge.textContent = isBusy ? "In Progress" : "Idle";
-  activeJobBadge.className = `count-pill ${isBusy ? "active" : "neutral"}`;
   focusBanner.classList.toggle("hidden", !isBusy);
   progressStrip.classList.toggle("hidden", !isBusy);
-  headerSubtitle.textContent = isBusy
-    ? "Focused on one customer until the job is complete."
-    : "Ready to take the next roadside request.";
 }
 
 function updateProgress(status) {
@@ -276,6 +265,15 @@ function renderRequests(snapshot) {
 function renderActiveJob(jobId, job) {
   activeServiceRequestId = jobId;
   updateProgress(job.status);
+  const destination = job.location
+    ? `${job.location.lat},${job.location.lng}`
+    : "";
+  const mapUrl = destination
+    ? `https://maps.google.com/maps?q=${destination}&z=16&output=embed`
+    : "";
+  const directionsUrl = destination
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&travelmode=driving`
+    : "";
   activeJobContainer.className = "job-stack";
   activeJobContainer.innerHTML = `
     <article class="job-card">
@@ -286,6 +284,19 @@ function renderActiveJob(jobId, job) {
         </div>
         <span class="status-chip ${getStatusChipClass(job.status)}">${getStatusLabel(job.status)}</span>
       </div>
+
+      ${mapUrl ? `
+        <div class="map-preview">
+          <iframe
+            src="${mapUrl}"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      ` : ""}
 
       <div class="job-meta-grid">
         <div class="meta-card">
@@ -307,6 +318,7 @@ function renderActiveJob(jobId, job) {
       </div>
 
       <div class="actions">
+        ${directionsUrl ? `<button class="navigate" data-url="${directionsUrl}">Navigate</button>` : ""}
         ${job.status === "assigned" ? `<button class="start" data-id="${jobId}">Start Route</button>` : ""}
         ${job.status === "en_route" ? `<button class="arrived" data-id="${jobId}">Mark Arrived</button>` : ""}
         ${job.status === "arrived" ? `<button class="complete" data-id="${jobId}">Complete Job</button>` : ""}
@@ -446,6 +458,14 @@ requestsList.addEventListener("click", async (event) => {
 activeJobContainer.addEventListener("click", async (event) => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) {
+    return;
+  }
+
+  if (target.classList.contains("navigate")) {
+    const url = target.dataset.url;
+    if (url) {
+      window.open(url, "_blank");
+    }
     return;
   }
 

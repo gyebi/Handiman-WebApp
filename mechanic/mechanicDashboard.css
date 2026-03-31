@@ -31,32 +31,30 @@ body {
 }
 
 .mechanic-app {
-  width: min(100%, 430px);
-  min-height: 100vh;
+  width: 100%;
+  max-width: 430px;
+  min-height: calc(100vh - 78px);
   margin: 0 auto;
-  padding: 18px 14px 28px;
+  padding: 0 16px 28px;
 }
 
 .app-header {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 20px 20px 6px;
   margin-bottom: 18px;
 }
 
 .app-logo {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-  border-radius: 18px;
-  filter: drop-shadow(0 12px 16px rgba(26, 58, 89, 0.14));
+  height: 52px;
+  width: auto;
+  border-radius: 16px;
+  filter: drop-shadow(0 12px 18px rgba(26, 58, 89, 0.16));
 }
 
-.header-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.app-body {
+  min-height: calc(100vh - 110px);
 }
 
 .eyebrow,
@@ -101,7 +99,6 @@ p {
   line-height: 1.5;
 }
 
-.availability-card,
 .screen-card,
 .summary-card,
 .request-card,
@@ -111,31 +108,6 @@ p {
 .count-pill,
 .empty-state {
   border-radius: 24px;
-}
-
-.availability-card {
-  grid-column: 1 / -1;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  width: fit-content;
-  padding: 14px 16px;
-  background: linear-gradient(145deg, rgba(26, 58, 89, 0.97), rgba(82, 134, 170, 0.95));
-  color: white;
-  box-shadow: var(--shadow-strong);
-}
-
-.availability-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: var(--brand-accent);
-  box-shadow: 0 0 0 8px rgba(0, 212, 166, 0.14);
-}
-
-.availability-card.busy .availability-dot {
-  background: var(--trio-sunrise);
-  box-shadow: 0 0 0 8px rgba(241, 208, 67, 0.18);
 }
 
 .app-body {
@@ -171,16 +143,6 @@ p {
   color: var(--bondi-blue-dark);
   font-size: 0.8rem;
   font-weight: 800;
-}
-
-.count-pill.active {
-  background: rgba(0, 212, 166, 0.12);
-  color: #0b5c49;
-}
-
-.count-pill.neutral {
-  background: rgba(82, 134, 170, 0.12);
-  color: var(--bondi-blue-dark);
 }
 
 .summary-strip {
@@ -375,6 +337,16 @@ p {
   font-weight: 800;
 }
 
+.map-preview {
+  width: 100%;
+  height: 220px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(82, 134, 170, 0.14);
+  box-shadow: 0 12px 24px rgba(26, 58, 89, 0.08);
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -420,6 +392,12 @@ button.complete {
   border: 1px solid rgba(224, 34, 46, 0.18);
 }
 
+button.navigate {
+  background: linear-gradient(135deg, #00d4a6, #31e7bc);
+  color: #083b32;
+  box-shadow: 0 12px 20px rgba(0, 212, 166, 0.18);
+}
+
 button.decline {
   background: rgba(82, 134, 170, 0.1);
   color: var(--bondi-blue-dark);
@@ -458,27 +436,7 @@ button.decline {
 
 @media (min-width: 700px) {
   .mechanic-app {
-    width: min(100%, 940px);
-    padding-inline: 18px;
-  }
-
-  .app-header {
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-  }
-
-  .availability-card {
-    grid-column: auto;
-    justify-self: end;
-  }
-
-  .mechanic-app.state-available .app-body {
-    grid-template-columns: 1.05fr 0.95fr;
-    align-items: start;
-  }
-
-  .mechanic-app.state-active {
-    width: min(100%, 640px);
+    padding-inline: 16px;
   }
 
   .request-head {
