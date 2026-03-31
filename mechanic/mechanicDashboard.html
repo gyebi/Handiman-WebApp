@@ -1,91 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1A3A59" />
-  <title>HandiMan Mechanic App</title>
-  <link rel="stylesheet" href="mechanicDashboard.css" />
-</head>
-<body>
-  <div id="mechanic-app" class="mechanic-app state-available">
-    <header class="app-header">
-      <img src="../assets/splash_logo.png" alt="HandiMan Logo" class="app-logo" />
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1A3A59" />
+    <title>HandiMan Mechanic App</title>
+    <link rel="stylesheet" href="mechanicDashboard.css" />
+    <link rel="manifest" href="/pwa/mechanic.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  </head>
+  <body>
+    <div id="mechanic-app" class="mechanic-app state-available">
+      <header class="app-header">
+        <img
+          src="../assets/splash_logo.png"
+          alt="HandiMan Logo"
+          class="app-logo"
+        />
+      </header>
 
-    <main class="app-body">
-      <section id="queue-screen" class="screen-card">
-        <div class="section-head">
-          <div>
-            <span class="section-tag">Available Mode</span>
-            <h2>Incoming Requests</h2>
+      <main class="app-body">
+        <section id="queue-screen" class="screen-card">
+          <div class="section-head">
+            <div>
+              <span class="section-tag">Available Mode</span>
+              <h2>Incoming Requests</h2>
+            </div>
+            <span id="queue-count" class="count-pill">0</span>
           </div>
-          <span id="queue-count" class="count-pill">0</span>
-        </div>
 
-        <div class="summary-strip">
-          <div class="summary-card">
-            <span class="summary-label">Pending</span>
-            <strong id="pending-count">0</strong>
+          <div class="summary-strip">
+            <div class="summary-card">
+              <span class="summary-label">Pending</span>
+              <strong id="pending-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Assigned</span>
+              <strong id="assigned-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">En Route</span>
+              <strong id="enroute-count">0</strong>
+            </div>
           </div>
-          <div class="summary-card">
-            <span class="summary-label">Assigned</span>
-            <strong id="assigned-count">0</strong>
-          </div>
-          <div class="summary-card">
-            <span class="summary-label">En Route</span>
-            <strong id="enroute-count">0</strong>
-          </div>
-        </div>
 
-        <p class="section-note">
-          Accept one request at a time. Once you take a job, the app switches into focused job mode.
-        </p>
+          <p class="section-note">
+            Accept one request at a time. Once you take a job, the app switches
+            into focused job mode.
+          </p>
 
-        <div id="requests-list" class="request-list"></div>
-      </section>
+          <div id="requests-list" class="request-list"></div>
+        </section>
 
-      <section id="active-screen" class="screen-card">
-        <div class="section-head">
-          <div>
-            <span class="section-tag">Mechanic Mode</span>
-            <h2>Current Assignment</h2>
+        <section id="active-screen" class="screen-card">
+          <div class="section-head">
+            <div>
+              <span class="section-tag">Mechanic Mode</span>
+              <h2>Current Assignment</h2>
+            </div>
           </div>
-        </div>
 
-        <div id="focus-banner" class="focus-banner hidden">
-          <strong>Focused job mode</strong>
-          <p>Other pending requests stay hidden until this assignment is completed.</p>
-        </div>
+          <div id="focus-banner" class="focus-banner hidden">
+            <strong>Focused job mode</strong>
+            <p>
+              Other pending requests stay hidden until this assignment is
+              completed.
+            </p>
+          </div>
 
-        <div id="progress-strip" class="progress-strip hidden">
-          <div class="progress-step" data-step="assigned">
-            <div class="progress-dot"></div>
-            <span class="progress-label">Assigned</span>
+          <div id="progress-strip" class="progress-strip hidden">
+            <div class="progress-step" data-step="assigned">
+              <div class="progress-dot"></div>
+              <span class="progress-label">Assigned</span>
+            </div>
+            <div class="progress-step" data-step="en_route">
+              <div class="progress-dot"></div>
+              <span class="progress-label">En Route</span>
+            </div>
+            <div class="progress-step" data-step="arrived">
+              <div class="progress-dot"></div>
+              <span class="progress-label">Arrived</span>
+            </div>
+            <div class="progress-step" data-step="completed">
+              <div class="progress-dot"></div>
+              <span class="progress-label">Done</span>
+            </div>
           </div>
-          <div class="progress-step" data-step="en_route">
-            <div class="progress-dot"></div>
-            <span class="progress-label">En Route</span>
-          </div>
-          <div class="progress-step" data-step="arrived">
-            <div class="progress-dot"></div>
-            <span class="progress-label">Arrived</span>
-          </div>
-          <div class="progress-step" data-step="completed">
-            <div class="progress-dot"></div>
-            <span class="progress-label">Done</span>
-          </div>
-        </div>
 
-        <div id="active-job-container" class="empty-state">
-          <div class="empty-icon">🧰</div>
-          <h3>No active assignment</h3>
-          <p>Accept a request to move into the live job workspace.</p>
-        </div>
-      </section>
-    </main>
-  </div>
+          <div id="active-job-container" class="empty-state">
+            <div class="empty-icon">🧰</div>
+            <h3>No active assignment</h3>
+            <p>Accept a request to move into the live job workspace.</p>
+          </div>
+        </section>
+      </main>
+    </div>
 
-  <script type="module" src="./mechanicDashboard.js"></script>
-</body>
+    <script type="module" src="./mechanicDashboard.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/mechanic-sw.js", { scope: "/mechanic/" })
+          .then(() => console.log("Mechanic SW registered"))
+          .catch((err) => console.log(err));
+      }
+    </script>
+  </body>
 </html>

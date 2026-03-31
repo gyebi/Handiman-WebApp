@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1A3A59" />
+    <title>Handiman Mechanic Offline</title>
+    <link rel="stylesheet" href="/mechanic/mechanicDashboard.css" />
+  </head>
+  <body>
+    <div class="mechanic-app state-available">
+      <header class="app-header">
+        <img src="/assets/splash_logo.png" alt="HandiMan Logo" class="app-logo" />
+      </header>
+
+      <main class="app-body">
+        <section class="screen-card">
+          <div class="section-head">
+            <div>
+              <span class="section-tag">Offline</span>
+              <h2>Connection needed for live jobs</h2>
+            </div>
+          </div>
+
+          <p class="section-note">
+            The mechanic workspace is installed, but incoming requests and live
+            status updates require an active internet connection.
+          </p>
+
+          <div class="summary-strip">
+            <div class="summary-card">
+              <span class="summary-label">Install</span>
+              <strong>Ready</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Queue</span>
+              <strong>Offline</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Sync</span>
+              <strong>Paused</strong>
+            </div>
+          </div>
+
+          <div class="empty-state">
+            <div class="empty-icon">📡</div>
+            <h3>Reconnect to continue</h3>
+            <p>Once the network is back, refresh to resume your live mechanic dashboard.</p>
+          </div>
+
+          <div style="margin-top: 16px">
+            <button class="start" onclick="window.location.reload()">Try Again</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

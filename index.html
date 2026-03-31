@@ -1,36 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="manifest" href="/pwa/customer.webmanifest" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1A3A59" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>Handiman App</title>
-  <link rel="stylesheet" href="handiman.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-</head>
+    <meta name="theme-color" content="#1A3A59" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Handiman App</title>
+    <link rel="stylesheet" href="handiman.css" />
+  </head>
 
-<body>
+  <body>
+    <div class="app-header">
+      <img src="assets/splash_logo.png" alt="HandiMan Logo" class="app-logo" />
+    </div>
+    <!-- APP ROOT -->
+    <div id="app"></div>
 
-  <div class="app-header">
-    <img src="assets/splash_logo.png" alt="HandiMan Logo" class="app-logo">
-
-  </div>
-  <!-- APP ROOT -->
-  <div id="app"></div>
-
-  <script type="module" src="js/firebase.js"></script>
-  <script type="module" src="js/router.js"></script>
-  <script type="module" src="js/screens.js"></script>
-  <script type="module" src="js/handiman.js"></script>
-  <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBreuqruCCRwAgxMMc_L_XiDyKhwinM5mw&loading=async"
-  async
-  defer>
-</script>
-
-</body>
-
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/router.js"></script>
+    <script type="module" src="js/screens.js"></script>
+    <script type="module" src="js/handiman.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBreuqruCCRwAgxMMc_L_XiDyKhwinM5mw&loading=async"
+      async
+      defer
+    ></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/customer-sw.js", { scope: "/" })
+          .then(() => console.log("Customer SW registered"))
+          .catch((err) => console.log(err));
+      }
+    </script>
+  </body>
 </html>

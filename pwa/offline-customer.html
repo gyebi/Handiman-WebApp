@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1A3A59" />
+    <title>Handiman Customer Offline</title>
+    <link rel="stylesheet" href="/handiman.css" />
+  </head>
+  <body>
+    <div class="app-header">
+      <img src="/assets/splash_logo.png" alt="HandiMan Logo" class="app-logo" />
+    </div>
+    <main id="app">
+      <section class="screen">
+        <div class="app-card">
+          <div class="section-copy">
+            <span class="eyebrow">Offline</span>
+            <h2>You are temporarily offline</h2>
+            <p>
+              Your Handiman customer app is installed, but live dispatch and map
+              updates need an internet connection.
+            </p>
+          </div>
+
+          <div class="info-panel">
+            <div class="info-list">
+              <div class="info-item">
+                <div class="info-icon">📶</div>
+                <div class="info-copy">
+                  <strong>Reconnect to continue</strong>
+                  <p>Once your connection returns, reopen the app or refresh this screen.</p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">🧰</div>
+                <div class="info-copy">
+                  <strong>Your app is still installed</strong>
+                  <p>The live roadside request flow will resume when the network is available.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button class="primary" onclick="window.location.reload()">Try Again</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
